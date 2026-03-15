@@ -40,7 +40,7 @@ $total = $result->num_rows;
     </div>
     <div class="stat-card">
       <div class="label">Email Service</div>
-      <div class="value" style="font-size:18px;margin-top:4px">SendGrid <span class="icon">✉️</span></div>
+      <div class="value" style="font-size:18px;margin-top:4px">AWS SES <span class="icon">✉️</span></div>
     </div>
     <div class="stat-card">
       <div class="label">Cloud Platform</div>
@@ -63,7 +63,7 @@ $total = $result->num_rows;
       <table>
         <thead>
           <tr>
-            <th>#</th>
+            <th>STT</th>
             <th>Customer</th>
             <th>Phone</th>
             <th>Address</th>
@@ -88,7 +88,7 @@ $total = $result->num_rows;
             <td>
               <div class="btn-actions">
                 <a href="update_customer.php?id=<?= $row['id'] ?>" class="btn btn-warning btn-sm">✏️ Edit</a>
-                <a href="send_email.php?email=<?= urlencode($row['email']) ?>" class="btn btn-outline btn-sm">✉️ Email</a>
+                <a href="send_email.php?email=<?= urlencode($row['email']) ?>" class="btn btn-outline btn-sm">✉️ Send Email</a>
                 <button class="btn btn-danger btn-sm"
                   onclick="confirmDelete(<?= $row['id'] ?>, '<?= htmlspecialchars(addslashes($row['name'])) ?>')">
                   🗑️ Delete
