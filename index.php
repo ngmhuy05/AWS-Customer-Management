@@ -1,9 +1,9 @@
 <?php
 session_start();
 if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
-    header("Location: customers.php");
+    header("Location: /customers");
 } else {
-    header("Location: login.php");
+    header("Location: /login");
 }
 exit;
 ?>

@@ -1,5 +1,6 @@
 <?php
 require_once "auth.php";
+require_once "db.php";
 require 'vendor/autoload.php';
 
 use Aws\Ses\SesClient;
@@ -7,10 +8,11 @@ use Aws\Exception\AwsException;
 
 header('Content-Type: application/json');
 
+$user_id = $_SESSION['user_id'];
 $emails  = $_POST['emails'] ?? [];
 $names   = $_POST['names'] ?? [];
-$subject = $_POST['subject'] ?? 'Customer Notification';
-$message = $_POST['message'] ?? 'Hello, this is a notification from AWS Customer Management System.';
+$subject = $_POST['subject'] ?? 'Thông báo từ CustomerHub';
+$message = $_POST['message'] ?? 'Xin chào, đây là thông báo từ hệ thống CustomerHub.';
 
 $success = 0;
 $failed  = 0;
@@ -37,6 +39,9 @@ if (!empty($emails)) {
             $failed++;
         }
     }
+
+    $desc = "Gửi email: '$subject' đến $success người";
+    logActivity($conn, $user_id, 'email', $desc);
 }
 
 echo json_encode(['success' => $success, 'failed' => $failed]);

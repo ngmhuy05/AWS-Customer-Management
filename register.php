@@ -1,3 +1,4 @@
+
 <?php
 session_start();
 require_once "db.php";
@@ -8,23 +9,32 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
 }
 
 $error = "";
+$success = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = $conn->real_escape_string($_POST['username']);
+    $username = $conn->real_escape_string(trim($_POST['username']));
+    $email = $conn->real_escape_string(trim($_POST['email']));
     $password = $_POST['password'];
-    $result = $conn->query("SELECT * FROM users WHERE username='$username' OR email='$username' LIMIT 1");
-    if ($result && $result->num_rows === 1) {
-        $user = $result->fetch_assoc();
-        if (password_verify($password, $user['password'])) {
-            $_SESSION['logged_in'] = true;
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['username'] = $user['username'];
-            $_SESSION['avatar'] = $user['avatar'];
-            header("Location: /customers");
-            exit;
+    $confirm = $_POST['confirm_password'];
+
+    if (strlen($username) < 3) {
+        $error = "Tên đăng nhập phải có ít nhất 3 ký tự.";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error = "Email không hợp lệ.";
+    } elseif (strlen($password) < 6) {
+        $error = "Mật khẩu phải có ít nhất 6 ký tự.";
+    } elseif ($password !== $confirm) {
+        $error = "Mật khẩu xác nhận không khớp.";
+    } else {
+        $check = $conn->query("SELECT id FROM users WHERE username='$username' OR email='$email'");
+        if ($check->num_rows > 0) {
+            $error = "Tên đăng nhập hoặc email đã tồn tại.";
+        } else {
+            $hashed = password_hash($password, PASSWORD_DEFAULT);
+            $conn->query("INSERT INTO users (username, email, password) VALUES ('$username', '$email', '$hashed')");
+            $success = "Đăng ký thành công!";
         }
     }
-    $error = "Tên đăng nhập hoặc mật khẩu không đúng.";
 }
 ?>
 <!DOCTYPE html>
@@ -32,7 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Đăng nhập — CustomerHub</title>
+<title>Đăng ký — CustomerHub</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{font-family:'Inter',sans-serif!important;box-sizing:border-box;margin:0;padding:0;}
@@ -44,14 +54,14 @@ body{background:var(--bg);color:var(--text);}
 .navbar-brand .dot{width:8px;height:8px;border-radius:50%;background:#0ea5e9;flex-shrink:0;}
 .theme-toggle{background:var(--bg);border:1px solid var(--border);border-radius:999px;padding:6px 14px;cursor:pointer;font-size:13px;color:var(--text-muted);transition:all .15s;}
 .theme-toggle:hover{border-color:var(--primary);color:var(--primary);}
-.auth-wrap{display:flex;align-items:center;justify-content:center;padding:48px 24px;}
+.auth-wrap{display:flex;align-items:center;justify-content:center;padding:40px 24px;}
 .auth-box{width:100%;max-width:420px;}
-.auth-header{text-align:center;margin-bottom:28px;}
+.auth-header{text-align:center;margin-bottom:24px;}
 .auth-icon{font-size:40px;margin-bottom:14px;}
 .auth-title{font-size:24px;font-weight:700;color:var(--text);letter-spacing:-0.5px;margin-bottom:5px;}
 .auth-sub{font-size:14px;color:var(--text-muted);}
 .auth-card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:28px;box-shadow:0 4px 24px rgba(0,0,0,.06);}
-.form-group{margin-bottom:18px;}
+.form-group{margin-bottom:16px;}
 .form-label{display:block;font-size:14px;font-weight:500;color:var(--text);margin-bottom:6px;}
 .form-control{width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:10px;font-size:15px;color:var(--text);background:var(--white);outline:none;transition:border .15s,box-shadow .15s;}
 .form-control:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(26,86,219,.1);}
@@ -60,7 +70,8 @@ body{background:var(--bg);color:var(--text);}
 .auth-footer{text-align:center;margin-top:18px;font-size:14px;color:var(--text-muted);}
 .auth-footer a{color:var(--primary);text-decoration:none;font-weight:500;}
 .auth-footer a:hover{text-decoration:underline;}
-.alert-danger{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;border-radius:10px;padding:12px 16px;font-size:14px;margin-bottom:18px;}
+.alert-danger{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;border-radius:10px;padding:12px 16px;font-size:14px;margin-bottom:16px;}
+.alert-success{background:#d1fae5;color:#065f46;border:1px solid #6ee7b7;border-radius:10px;padding:12px 16px;font-size:14px;margin-bottom:16px;}
 </style>
 </head>
 <body>
@@ -72,31 +83,42 @@ body{background:var(--bg);color:var(--text);}
 <div class="auth-wrap">
   <div class="auth-box">
     <div class="auth-header">
-      <div class="auth-icon">🔐</div>
-      <div class="auth-title">Chào mừng trở lại</div>
-      <div class="auth-sub">Đăng nhập vào CustomerHub</div>
+      <div class="auth-icon">📝</div>
+      <div class="auth-title">Tạo tài khoản</div>
+      <div class="auth-sub">Đăng ký để sử dụng CustomerHub</div>
     </div>
 
     <?php if ($error): ?>
       <div class="alert-danger">❌ <?= htmlspecialchars($error) ?></div>
     <?php endif; ?>
+    <?php if ($success): ?>
+      <div class="alert-success">✅ <?= htmlspecialchars($success) ?> <a href="/login" style="color:#065f46;font-weight:600">Đăng nhập ngay</a></div>
+    <?php endif; ?>
 
     <div class="auth-card">
       <form method="post">
         <div class="form-group">
-          <label class="form-label">Tên đăng nhập hoặc Email</label>
+          <label class="form-label">Tên đăng nhập</label>
           <input type="text" name="username" class="form-control" placeholder="Nhập tên đăng nhập" required autofocus>
         </div>
-        <div class="form-group" style="margin-bottom:4px">
-          <label class="form-label">Mật khẩu</label>
-          <input type="password" name="password" class="form-control" placeholder="Nhập mật khẩu" required>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" name="email" class="form-control" placeholder="Nhập email" required>
         </div>
-        <button type="submit" class="btn-auth">Đăng nhập →</button>
+        <div class="form-group">
+          <label class="form-label">Mật khẩu</label>
+          <input type="password" name="password" class="form-control" placeholder="Ít nhất 6 ký tự" required>
+        </div>
+        <div class="form-group" style="margin-bottom:4px">
+          <label class="form-label">Xác nhận mật khẩu</label>
+          <input type="password" name="confirm_password" class="form-control" placeholder="Nhập lại mật khẩu" required>
+        </div>
+        <button type="submit" class="btn-auth">Đăng ký →</button>
       </form>
     </div>
 
     <div class="auth-footer">
-      Chưa có tài khoản? <a href="/register">Đăng ký ngay</a>
+      Đã có tài khoản? <a href="/login">Đăng nhập</a>
     </div>
   </div>
 </div>
