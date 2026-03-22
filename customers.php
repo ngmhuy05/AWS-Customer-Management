@@ -147,7 +147,7 @@ tr:hover td{background:var(--bg);}
   <div class="topbar">
     <div><div class="topbar-title">Quản lý khách hàng</div><div class="topbar-sub">Thêm, sửa, xóa và liên lạc với khách hàng</div></div>
     <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
-      <span style="font-size:14px;color:var(--text-muted)">Tổng: <strong id="statTotal"><?= $total ?></strong></span>
+      
       <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙 Dark</button>
     </div>
   </div>
@@ -160,7 +160,7 @@ tr:hover td{background:var(--bg);}
     </div>
     <div class="card">
       <div class="card-header">
-        <h2>Tất cả khách hàng</h2>
+        <h2>Tất cả khách hàng <span style="font-size:13px;font-weight:400;color:var(--text-muted);margin-left:8px">(<span id="statTotal"><?= $total ?></span> khách hàng)</span></h2>
         <button class="btn btn-primary" onclick="openAddModal()">+ Thêm khách hàng</button>
       </div>
       <div class="table-wrap">

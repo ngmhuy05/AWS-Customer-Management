@@ -1,3 +1,4 @@
+
 <?php
 require_once "auth.php";
 require_once "db.php";
@@ -8,11 +9,10 @@ use Aws\Exception\AwsException;
 
 header('Content-Type: application/json');
 
-$user_id = $_SESSION['user_id'];
 $emails  = $_POST['emails'] ?? [];
 $names   = $_POST['names'] ?? [];
-$subject = $_POST['subject'] ?? 'Thông báo từ CustomerHub';
-$message = $_POST['message'] ?? 'Xin chào, đây là thông báo từ hệ thống CustomerHub.';
+$subject = $_POST['subject'] ?? 'Customer Notification';
+$message = $_POST['message'] ?? 'This is a notification from AWS Customer Management System.';
 
 $success = 0;
 $failed  = 0;
@@ -31,7 +31,7 @@ if (!empty($emails)) {
                 'Destination' => ['ToAddresses' => [$emailTo]],
                 'Message' => [
                     'Subject' => ['Data' => $subject],
-                    'Body'    => ['Text' => ['Data' => $message]],
+                    'Body'    => ['Text' => ['Data' => "Hello $name,\n\n$message"]],
                 ],
             ]);
             $success++;
@@ -40,8 +40,11 @@ if (!empty($emails)) {
         }
     }
 
-    $desc = "Gửi email: '$subject' đến $success người";
-    logActivity($conn, $user_id, 'email', $desc);
+    if ($success > 0) {
+        $emailList = implode(', ', array_slice($emails, 0, 3));
+        $desc = "Gửi email hàng loạt đến $success người: $emailList" . (count($emails) > 3 ? '...' : '');
+        logActivity($conn, $_SESSION['user_id'], 'email', $desc);
+    }
 }
 
 echo json_encode(['success' => $success, 'failed' => $failed]);
