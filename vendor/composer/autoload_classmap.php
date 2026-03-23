@@ -29,8 +29,5 @@ return array(
     'AWS\\CRT\\NativeResource' => $vendorDir . '/aws/aws-crt-php/src/AWS/CRT/NativeResource.php',
     'AWS\\CRT\\OptionValue' => $vendorDir . '/aws/aws-crt-php/src/AWS/CRT/Options.php',
     'AWS\\CRT\\Options' => $vendorDir . '/aws/aws-crt-php/src/AWS/CRT/Options.php',
-    'BaseSendGridClientInterface' => $vendorDir . '/sendgrid/sendgrid/lib/BaseSendGridClientInterface.php',
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
-    'SendGrid' => $vendorDir . '/sendgrid/sendgrid/lib/SendGrid.php',
-    'TwilioEmail' => $vendorDir . '/sendgrid/sendgrid/lib/TwilioEmail.php',
 );

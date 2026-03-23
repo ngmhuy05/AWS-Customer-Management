@@ -1,7 +1,5 @@
 {
     "require": {
-        "sendgrid/sendgrid": "^8.1",
-        "twilio/sdk": "^8.11",
         "aws/aws-sdk-php": "^3.373",
         "vonage/client": "^4.3"
     }

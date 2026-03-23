@@ -75,10 +75,11 @@ $rows=$result->fetch_all(MYSQLI_ASSOC);
 .nav-item.danger{color:var(--danger);}
 .nav-item.danger:hover{background:#fee2e2;}
 .sidebar-footer{padding:10px 8px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:2px;}
-.user-info{display:flex;align-items:center;gap:10px;padding:8px 11px;border-radius:8px;background:var(--bg);overflow:hidden;}
+.user-info{display:flex;align-items:center;gap:10px;padding:8px 11px;border-radius:8px;background:var(--bg);overflow:hidden;transition:padding .25s ease,justify-content .25s ease;}
+.sidebar.collapsed .user-info{padding:6px;justify-content:center;background:transparent;}
 .user-avatar{width:30px;height:30px;border-radius:50%;background:var(--primary-light);color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;}
-.user-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;transition:opacity .2s,width .2s;width:120px;}
-.sidebar.collapsed .user-name{opacity:0;width:0;}
+.user-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;transition:opacity .2s,width .2s,max-width .2s;max-width:120px;}
+.sidebar.collapsed .user-name{opacity:0;max-width:0;width:0;}
 .main-wrap{margin-left:220px;transition:margin-left .25s ease;min-height:100vh;display:flex;flex-direction:column;}
 .main-wrap.collapsed{margin-left:56px;}
 .topbar{height:68px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 28px;position:sticky;top:0;z-index:50;}
@@ -120,6 +121,8 @@ tr:hover td{background:var(--bg);}
 .toast.danger{border-left:3px solid var(--danger);}
 .btn{font-family:'Inter',sans-serif;font-size:14px;font-weight:500;}
 .card-header h2{font-size:16px;font-weight:600;}
+/* FIX: customer count same size as title */
+.stat-count{font-size:16px;font-weight:600;color:var(--text-muted);margin-left:8px;}
 </style>
 </head>
 <body>
@@ -147,7 +150,6 @@ tr:hover td{background:var(--bg);}
   <div class="topbar">
     <div><div class="topbar-title">Quản lý khách hàng</div><div class="topbar-sub">Thêm, sửa, xóa và liên lạc với khách hàng</div></div>
     <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
-      
       <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙 Dark</button>
     </div>
   </div>
@@ -160,7 +162,7 @@ tr:hover td{background:var(--bg);}
     </div>
     <div class="card">
       <div class="card-header">
-        <h2>Tất cả khách hàng <span style="font-size:13px;font-weight:400;color:var(--text-muted);margin-left:8px">(<span id="statTotal"><?= $total ?></span> khách hàng)</span></h2>
+        <h2>Tất cả khách hàng <span class="stat-count">(<span id="statTotal"><?= $total ?></span> khách hàng)</span></h2>
         <button class="btn btn-primary" onclick="openAddModal()">+ Thêm khách hàng</button>
       </div>
       <div class="table-wrap">
