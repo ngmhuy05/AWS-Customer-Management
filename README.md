@@ -202,19 +202,6 @@ $dbname     = "customerdb";
 
 ---
 
-## Nhóm thực hiện
-
-| Họ tên | MSSV |
-|---|---|
-| Nguyễn Minh Huy | 31231022881 |
-| Biện Bùi Duy Quang | |
-
-**Giảng viên hướng dẫn:** TS. Trần Hồng Thái  
-**Môn học:** Điện toán đám mây — 26D1INF50915501  
-**Trường:** Đại học Kinh tế TP. Hồ Chí Minh (UEH)
-
----
-
 ## License
 
 Dự án được thực hiện cho mục đích học thuật.
